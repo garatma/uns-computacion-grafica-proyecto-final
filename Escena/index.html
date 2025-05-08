@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>"The Room"</title>
+	<script src="../Libs/gl-matrix-min.js"></script>
+	<script src="../Libs/VertexAttributeInfo.js"></script>
+	<script src="../Libs/VAOHelper.js"></script>
+	<script src="../Libs/ShaderProgramHelper.js"></script>
+	<script src="../Libs/interfaz.js"></script>
+	<script src="../Libs/Utils.js"></script>
+	<script src="../Libs/OBJParser.js"></script>
+	<script src="../Libs/Camara.js"></script>
+	<script src="../Libs/Model.js"></script>
+	<script src="../Libs/Light.js"></script>
+	<script src="../Libs/BoundingBox.js"></script>
+	<script src="../Libs/Picking.js"></script>
+	<script src="../Libs/CamaraSombras.js"></script>
+	<script src="../Shaders/Phong.js"></script>
+	<script src="../Shaders/PhongMadera.js"></script>
+	<script src="../Shaders/ShaderCielo.js"></script>
+	<script src="../Shaders/NormalMap.js"></script>
+	<script src="../Shaders/CookTorrance.js"></script>
+	<script src="../Shaders/Depth.js"></script>
+	<script src="../Modelos/cuadro/marco.js"></script>
+	<script src="../Modelos/cuadro/lienzo.js"></script>
+	<script src="../Modelos/suelo/suelo.js"></script>
+	<script src="../Modelos/pared/pared_ventana.js"></script>
+	<script src="../Modelos/pared/marco_ventana.js"></script>
+	<script src="../Modelos/pared/pared.js"></script>
+	<script src="../Modelos/pared/pared_fondo.js"></script>
+	<script src="../Modelos/puerta/puerta.js"></script>
+	<script src="../Modelos/cielorraso/cielorraso.js"></script>
+	<script src="../Modelos/pila libros/libro_base.js"></script>
+	<script src="../Modelos/pila libros/libro_resto.js"></script>
+	<script src="../Modelos/estufa/estufa_clara.js"></script>
+	<script src="../Modelos/estufa/estufa_interior.js"></script>
+	<script src="../Modelos/estufa/estufa_oscura.js"></script>
+	<script src="../Modelos/estufa/estufa_patas.js"></script>
+	<script src="../Modelos/alfombra/alfombra.js"></script>
+	<script src="../Modelos/atril.js"></script>
+	<script src="../Modelos/mesa.js"></script>
+	<script src="../Modelos/pluma/pluma.js"></script>
+	<script src="../Modelos/pluma/contenedor.js"></script>
+	<script src="../Modelos/reloj/manecilla_minuto_hora.js"></script>
+	<script src="../Modelos/reloj/manecilla_segundo.js"></script>
+	<script src="../Modelos/reloj/reloj_blanco.js"></script>
+	<script src="../Modelos/reloj/reloj_madera.js"></script>
+	<script src="../Modelos/reloj/reloj_numeros_negros.js"></script>
+	<script src="../Modelos/reloj/reloj_oro.js"></script>
+	<script src="../Modelos/reloj/reloj_pendulo_blanco.js"></script>
+	<script src="../Modelos/reloj/reloj_pendulo_oro.js"></script>
+	<script src="../Modelos/reloj/reloj_placa_pendulo.js"></script>
+	<script src="../Modelos/tintero.js"></script>
+	<script src="../Modelos/cielo/cielo.js"></script>
+	<script src="../Modelos/luna/luna.js"></script>
+	<script src="../Modelos/vela/vela.js"></script>
+	<script src="../Modelos/vela/vela_base.js"></script>
+	<script src="../Modelos/vela/llama.js"></script>
+	<script src="../Modelos/calavera/calavera.js"></script>
+	<script src="../Modelos/libro/cuerpo_fondo.js"></script>
+	<script src="../Modelos/libro/cuerpo_frente.js"></script>
+	<script src="../Modelos/libro/lomo.js"></script>
+	<script src="../Modelos/libro/pagina_fondo.js"></script>
+	<script src="../Modelos/libro/pagina_frente.js"></script>
+	<script src="../Modelos/libro/pagina_medio.js"></script>
+	<script src="../Modelos/farol/Farol.js"></script>
+	<script src="../Modelos/banqueta.js"></script>
+	<script src="../Modelos/materiales.js"></script>
+	<script src="main.js"></script>
+	<script type="text/javascript">
+		window.addEventListener('keydown',this.oyente_teclado,false);
+		function oyente_teclado(e) {
+			var tecla = e.key;
+			switch (tecla) {
+				case "a":
+					camara.forwards_backwards(1);
+					break;
+				case "w":
+					camara.left_right(1);
+					break;
+				case "d":
+					camara.forwards_backwards(-1);
+					break;
+				case "s":
+					camara.left_right(-1);
+					break;
+				case "r":
+					camara.up_down(-1);
+					break;
+				case "f":
+					camara.up_down(1);
+					break;
+				case "q":
+					camara.yaw(0.1);
+					break;
+				case "e":
+					camara.yaw(-0.1);
+					break;
+			}
+		}
+	</script>
+	<link rel=StyleSheet href="style.css" type="text/css" media=screen>
+	<link rel="shortcut icon" type="image/jpg" href="../icons/favicon.jpg"/>
+
+</head>
+	
+	<body onload='onLoad();'>
+		<audio id="high_tick"><source src="../Modelos/reloj/high tick.ogg" type="audio/ogg"></audio>
+		<audio id="low_tick"><source src="../Modelos/reloj/low tick.ogg" type="audio/ogg"></audio>
+		<audio id="bell"><source src="../Modelos/reloj/bell.ogg" type="audio/ogg"></audio>
+			<div id ='DivPrincipal'	>
+				<button id = "boton_interfaz"  onclick="SwapInterfaz();">GUI</button>
+				<button id = "boton_vela" hidden=true; onclick="cambiar_vela();">Cambiar vela</button>
+			<td >	
+				<button id = "boton_fullscreen" style="float:left;" onclick="FullScreen(document.documentElement);"><img src="../icons/full_screen.png" ></button>
+				<h1 id="Titulo">Escena Final</h1>
+			</td>
+			<div id ='Canvas'>
+					<div class="controls" id="controls">
+							<div class="control">
+								<label id="picker-label"> <b>No hay objeto seleccionado</b> </label>
+							</div>
+					</div>	
+				<canvas id='webglCanvas' width=1000 height=700 oninput="teclado(this);">
+				</canvas>
+			</div>
+
+			<div id='PanelPrincipal' hidden=true;>
+				<table id="Luces">
+					<tr id="LucesHeaders">
+						<td colspan="2">Luz</td>
+						<td >
+							<select id="luz_seleccionada" onclick="cambiar_luz(value);">
+								<option value=0>Vela</option>
+								<option value=1>Farol</option>
+								<option value=2>Ambiente</option>
+							</select>
+						</td>
+					</tr>
+
+					<!--<tr id="eatt">
+							<td class = "titulo">Atenuación</td>
+							<td>
+								<label class="value">a:</label>
+								<input type="range" step="0.1" id="aatt" min="0" max="10" value="0" class="slider" oninput="atenuacion(this.value,0);">
+
+								<label class="value"><br />b:</label>
+								<input type="range" step="0.1" id="batt" min="0" max="10"  value="0"class="slider" oninput="atenuacion(this.value,1);">
+
+								<label class="value"><br />c:</label>
+								<input type="range" step="0.1" id="catt" min="0" max="10" value="0" class="slider"oninput="atenuacion(this.value,2);">
+							</td>
+							<td>
+								<spam  class="value" id="textInput7" min="0" max="10" value="0" ></spam><br />
+								<spam  class="value" id="textInput8" min="0" max="10" value="0" ></spam><br />
+								<spam  class="value" id="textInput9" min="0" max="10" value="0" ></spam>
+							</td>
+					</tr>-->
+
+					<tr id ="eaint">
+						<td class = "titulo">Intensidad</td>
+						<td>
+							<label class="value">r:</label>
+							<input type="range" id="rint" min="0" max="255" value="255" class="slider" oninput="intensidad(this.value, 0);">
+
+							<label class="value"><br />g:</label>
+							<input type="range" id="gint"  min="0" max="255" value="244.8" class="slider" oninput="intensidad(this.value, 1);">
+
+							<label class="value"><br />b:</label>
+							<input type="range" id="bint"  min="0" max="255" value="226.85"  class="slider" oninput="intensidad(this.value, 2);">
+						</td>
+						<td>
+							<spam  class="value" id="textInput10" min="0" max="255" value="255" ></spam><br />
+							<spam  class="value"id="textInput11"  min="0" max="255" value="244.8" ></spam><br />
+							<spam  class="value"id="textInput12"  min="0" max="255" value="226.85"></spam>
+						</td>
+					</tr>
+				</table>
+			<!------------------------------- multitextura ------------------------------------>
+
+				<table id="TexturasNormalMapping">
+					<tr id="TexturasNormalMappingHeader">
+						<td colspan="2">Texturas</td>
+					</tr>
+					<tr>
+						<td class = "titulo">Texturas</td>
+						<td>
+							<form>
+								<input type="checkbox" checked id="colormetal" onclick="actualizar_texturas(0,this.id)">Color Metal<br>
+
+								<input type="checkbox" checked id="normal" onclick="actualizar_texturas(1,this.id)">Mapa de Normales<br>
+
+								<input type="checkbox" checked id="especularmetalica" onclick="actualizar_texturas(2,this.id)">Especular<br>
+							</form>
+						</td>
+					</tr>
+				</table>
+
+			<!------------------------------- cambiar lienzo --------------------------------------->
+				<table id="Lienzo" hidden = true>
+					<tr id="LienzoHeader">
+						<td colspan="2">Lienzo</td>
+						<td>
+							<select id="boton_lienzo" onclick="cambiar_lienzo(value);">
+								<option value=1>San Pablo ermitaño</option>
+								<option value=2>Galileo</option>
+								<option value=3>Mona Lisa</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+
+			<!------------------------------- procedural ------------------------------------>
+			<table id="TexturaProcedural">
+				<tr id="TexturaProceduralHeader">
+					<td colspan="2">Textura Procedural</td>
+					<td colspan="2"></td>
+				</tr>
+			
+				<tr>
+					<td class = "titulo">Lacunaridad</td>
+					<td>
+						<input type="range" id="lacunaridad" min="1" max="10" value="2.5" class="slider" oninput="lacunaridad(this.value);">
+					</td>
+					<td>	
+						<spam class="value" id="textInput13"  min="1" max="10" value="2.5" ></spam>	
+					</td>
+				</tr>
+				<tr>
+					<td class = "titulo">Ganancia</td>
+					<td>
+						<input type="range"  id="ganancia" min="0" max="10" value="0.5" class="slider" oninput="ganancia(this.value);">
+					</td>
+					<td>	
+						<spam class="value" id="textInput14" min="0" max="10" value="0.5" ></spam>	
+					</td>
+				</tr>
+				<tr>
+					<td class = "titulo">Octavas</td>
+					<td>
+						<input type="range"  id="octavas" min="0" max="12" value="10" class="slider" oninput="octavas(this.value);">
+					</td>
+					<td>	
+						<spam class="value" id="textInput15"  min="0" max="12" value="10" ></spam>	
+					</td>
+				</tr>
+				<tr>
+					<td class = "titulo">Resolución</td>
+					<td>
+						<input type="range"  id="resolucion0" min="0" max="1024" class ="slider" oninput="resolucion(this.value, 0);">
+						<input type="range"  id="resolucion1" min="1" max="1024" class ="slider" oninput="resolucion(this.value, 1);">
+					</td>
+					<td>	
+						<spam  class="value" id="textInput16" min="0" max="1024" ></spam><br />
+						<spam  class="value" id="textInput17" min="0" max="1024"></spam>
+					</td>
+				</tr>
+			</table>
+		
+
+			<!------------------------------- Cámara ------------------------------------>
+
+				<!--<table id="TablaGeneral">
+					<tr id="CamaraHeader">
+						<td colspan="1">Cámara</td>
+						<td>
+							<button id="boton_reset" onclick="reset_camara();">Restablecer cámara
+							</button>
+						</td>
+					</tr>
+				</table>-->
+			</div>
+		</div>
+	</body>
+</html>
+
+			
